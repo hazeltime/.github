@@ -1,0 +1,91 @@
+name: Build .NET (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        description: '.NET SDK version to use'
+        type: string
+        default: '9.0.x'
+      solution-path:
+        description: 'Path to solution or project file'
+        type: string
+        default: '.'
+      run-tests:
+        description: 'Whether to run tests'
+        type: boolean
+        default: true
+      run-benchmarks:
+        description: 'Whether to run benchmarks'
+        type: boolean
+        default: false
+      publish:
+        description: 'Whether to publish artifacts'
+        type: boolean
+        default: false
+      artifact-name:
+        description: 'Name for the build artifact'
+        type: string
+        default: 'build-output'
+    secrets:
+      NUGET_TOKEN:
+        description: 'NuGet feed token (optional)'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET ${{ inputs.dotnet-version }}
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.props') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ inputs.solution-path }}
+
+      - name: Build
+        run: dotnet build ${{ inputs.solution-path }} --no-restore --configuration Release
+
+      - name: Test
+        if: ${{ inputs.run-tests }}
+        run: dotnet test ${{ inputs.solution-path }} --no-build --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx"
+
+      - name: Upload test results
+        if: ${{ inputs.run-tests && always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: test-results
+          path: '**/*.trx'
+          retention-days: 7
+
+      - name: Benchmark
+        if: ${{ inputs.run-benchmarks }}
+        run: dotnet run --project ${{ inputs.solution-path }} --configuration Release -- --filter '*'
+
+      - name: Publish
+        if: ${{ inputs.publish }}
+        run: dotnet publish ${{ inputs.solution-path }} --no-build --configuration Release --output ./publish
+
+      - name: Upload build artifact
+        if: ${{ inputs.publish }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ./publish
+          retention-days: 14
