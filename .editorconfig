@@ -1,0 +1,64 @@
+# EditorConfig: https://editorconfig.org
+# Org-wide defaults for hazeltime
+root = true
+
+# ─── Global defaults ───────────────────────────────────────────────────────────
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# ─── C# ────────────────────────────────────────────────────────────────────────
+[*.cs]
+indent_size = 4
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_prefer_braces = true:suggestion
+
+# ─── XML / project files ────────────────────────────────────────────────────────
+[*.{xml,csproj,vbproj,fsproj,props,targets,nuspec,config,resx}]
+indent_size = 2
+
+# ─── JSON ───────────────────────────────────────────────────────────────────────
+[*.{json,jsonc}]
+indent_size = 2
+
+# ─── YAML ───────────────────────────────────────────────────────────────────────
+[*.{yml,yaml}]
+indent_size = 2
+
+# ─── Markdown ───────────────────────────────────────────────────────────────────
+[*.{md,mdx}]
+trim_trailing_whitespace = false
+indent_size = 2
+
+# ─── JavaScript / TypeScript ────────────────────────────────────────────────────
+[*.{js,jsx,ts,tsx,mjs,cjs}]
+indent_size = 2
+
+# ─── PowerShell ─────────────────────────────────────────────────────────────────
+[*.{ps1,psm1,psd1}]
+indent_size = 4
+end_of_line = crlf
+
+# ─── Shell scripts ──────────────────────────────────────────────────────────────
+[*.sh]
+end_of_line = lf
+indent_size = 2
+
+# ─── Makefiles (tabs required) ──────────────────────────────────────────────────
+[Makefile]
+indent_style = tab
