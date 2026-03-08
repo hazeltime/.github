@@ -1,0 +1,47 @@
+name: Build Node.js (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version'
+        type: string
+        default: '22.x'
+      package-manager:
+        description: 'Package manager (npm or pnpm)'
+        type: string
+        default: 'npm'
+      run-tests:
+        description: 'Whether to run tests'
+        type: boolean
+        default: true
+      run-build:
+        description: 'Whether to run build step'
+        type: boolean
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Setup Node.js ${{ inputs.node-version }}
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: ${{ inputs.package-manager }}
+
+      - name: Install dependencies
+        run: ${{ inputs.package-manager }} ci
+
+      - name: Build
+        if: ${{ inputs.run-build }}
+        run: ${{ inputs.package-manager }} run build
+
+      - name: Test
+        if: ${{ inputs.run-tests }}
+        run: ${{ inputs.package-manager }} test
