@@ -1,0 +1,6 @@
+{
+  "name": ".NET CI",
+  "description": "Build and test a .NET project using the hazeltime reusable CI workflow. Supports GitHub Packages NuGet authentication for consuming Haz3l.* packages.",
+  "iconName": "octicon-gear",
+  "categories": ["continuous-integration", "dotnet"]
+}

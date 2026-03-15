@@ -1,0 +1,15 @@
+# CODEOWNERS template for hazeltime repos
+# Copy this file to .github/CODEOWNERS and adjust owners as needed.
+#
+# Global owner — all files default to the platform team
+* @hazeltime/platform
+
+# Infrastructure & CI
+.github/         @hazeltime/platform
+scripts/         @hazeltime/platform
+Dockerfile*      @hazeltime/platform
+docker-compose*  @hazeltime/platform
+
+# Documentation
+*.md             @hazeltime/platform
+docs/            @hazeltime/platform
